@@ -196,8 +196,8 @@ event new_module => sub {
     my $nb = $self->_w('notebook');
     my $pane = $nb->add( $modname, -label=>$modname );
     $nb->raise( $modname );
-    my $rotext = $pane->Scrolled( 'ROText', -scrollbars => 'e' )->pack( top, xfill2 );
-    $rotext->tag( configure => step   => -font => "FNbig" );
+    my $rotext = $pane->Scrolled( 'ROText', -scrollbars => 'e', -font => "MyFixed", )->pack( top, xfill2 );
+    $rotext->tag( configure => step   => -font => "MyFixed" );
     $rotext->tag( configure => error  => -foreground => "firebrick" );
     $rotext->tag( configure => result => -foreground => "steelblue" );
     $self->_set_w( "rotext_$modname", $rotext );
@@ -333,14 +333,16 @@ sub _build_gui {
 
     # font used in progression text
     $mw->fontCreate( "FNbig", -weight => "bold" );
+    $mw->fontCreate( "MyFixed", -family => 'Liberation Mono', -size => 14);
 
     #
     my $ftop = $mw->Frame->pack( top, fillx, pad20 );
-    $ftop->Label( -text => 'New module wanted:' )->pack( left, pad2 );
-    my $entry = $ftop->Entry()->pack( left, xfillx, pad2 );
+    $ftop->Label( -text => 'New module wanted:', -font => "MyFixed", )->pack( left, pad2 );
+    my $entry = $ftop->Entry( -font => "MyFixed", )->pack( left, xfillx, pad2 );
     $self->_set_w( ent_module => $entry );
     $ftop->Button( -text => 'submit',
         -command => $s->postback( '_on_btn_submit' ),
+        -font => "MyFixed",
     )->pack( left, pad2 );
     $mw->bind( '<Return>', $s->postback( '_on_btn_submit' ) );
 
@@ -371,6 +373,7 @@ sub _build_close_btn {
     my $b = $parent->Button(
         -text    => "Clean all finished modules",
         -command => $self->_session->postback( "_on_btn_clean_all" ),
+        -font => "MyFixed",
     )->pack( bottom, fillx );
 }
 
@@ -387,12 +390,14 @@ sub _build_hlist {
         -width      => 30,
         -columns    => 3,
         -header     => 1,
-    )->pack( top, xfilly );
+    )->pack( top, xfilly);
+
+    $hlist->configure( font => "MyFixed", );
     $self->_set_w( hlist => $hlist );
 
-    $hlist->header( create => 0, -text => 'local' );
-    $hlist->header( create => 1, -text => 'bs' );
-    $hlist->header( create => 2, -text => 'module' );
+    $hlist->header( create => 0, -text => 'local', );
+    $hlist->header( create => 1, -text => 'bs' , );
+    $hlist->header( create => 2, -text => 'module' ,);
 
     $hlist->bind( '<Double-1>', $self->_session->postback('_on_hlist_2click') );
 }
@@ -408,6 +413,7 @@ sub _build_notebook {
 
     # create the notebook that will hold module details
     my $nb = $parent->NoteBook->pack( top, xfill2 );
+    $nb->configure( -font => "MyFixed", );
     $self->_set_w('notebook', $nb);
 
     # create a first tab with the legend
@@ -418,9 +424,9 @@ sub _build_notebook {
     my @col1 = qw{ black yellow orange blue green red };
     my @lab2 = ( 'not started', 'not available', 'importing', 'building', 'available', 'error' );
     my @col2 = qw{ black yellow purple orange green red };
-    $legend->Label( -text => 'Local' )
+    $legend->Label( -text => 'Local', -font => "MyFixed", )
       ->grid( -row => 0, -column => 0, -columnspan=>2, -sticky => 'w' );
-    $legend->Label( -text => 'Build System' )
+    $legend->Label( -text => 'Build System', -font => "MyFixed", )
       ->grid( -row => 0, -column => 2,  -columnspan=>2,-sticky => 'w' );
     my $buldir = $SHAREDIR->subdir( 'bullets' );
     foreach my $i ( 0 .. $#lab1 ) {
@@ -428,8 +434,8 @@ sub _build_notebook {
           ->grid( -row => $i + 1, -column => 0, ipad5 );
         $legend->Label( -image => _image( $buldir->file( $col2[$i] . ".png" ) ) )
           ->grid( -row => $i + 1, -column => 2, ipad5 );
-        $legend->Label( -text => $lab1[$i] )->grid( -row=>$i+1, -column=>1, -sticky => 'w' );
-        $legend->Label( -text => $lab2[$i] )->grid( -row=>$i+1, -column=>3, -sticky => 'w' );
+        $legend->Label( -text => $lab1[$i] , -font => "MyFixed",)->grid( -row=>$i+1, -column=>1, -sticky => 'w' );
+        $legend->Label( -text => $lab2[$i] , -font => "MyFixed",)->grid( -row=>$i+1, -column=>3, -sticky => 'w' );
     }
 
 }
